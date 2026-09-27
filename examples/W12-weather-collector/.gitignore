@@ -1,0 +1,5 @@
+# 실행 시 다시 만들 수 있는 결과와 로컬 캐시
+output/
+__pycache__/
+*.pyc
+.DS_Store
