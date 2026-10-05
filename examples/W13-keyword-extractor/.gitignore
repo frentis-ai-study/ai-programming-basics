@@ -1,0 +1,4 @@
+output/
+legacy/출력/
+__pycache__/
+.DS_Store

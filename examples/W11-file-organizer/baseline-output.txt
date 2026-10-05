@@ -1,0 +1,7 @@
+정리 전: data.zip, 고양이.png, 메모.txt, 보고서.pdf, 여행.jpg
+data.zip -> 출력/etc/data.zip
+고양이.png -> 출력/images/고양이.png
+메모.txt -> 출력/docs/메모.txt
+보고서.pdf -> 출력/docs/보고서.pdf
+여행.jpg -> 출력/images/여행.jpg
+정리 완료: 이미지 2개, 문서 2개, 기타 1개
