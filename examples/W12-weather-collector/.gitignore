@@ -1,5 +1,4 @@
-# 실행 시 다시 만들 수 있는 결과와 로컬 캐시
-output/
+# 실행하면 이 폴더에 만들어지는 파일
+/forecast_records.csv
+/forecast_records.png
 __pycache__/
-*.pyc
-.DS_Store

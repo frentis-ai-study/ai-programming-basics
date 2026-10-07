@@ -1,38 +1,39 @@
-# W13 · 작은 메모에서 파일·CSV 집계로 확장
+# W13 · 키워드 추출기
 
-같은 강의의 단계별 실제 생성 코드를 모았습니다. `notes/`의 세 파일은 수업용 합성 메모이며 실제 고객 기록이 아닙니다. 코드는 기존 생성본 바이트 그대로입니다.
+메모에 자주 나온 말을 세는 예제입니다. 메모 한 줄에서 시작해 메모 파일로 넓히고, 세는 규칙을 더해 결과를 다듬습니다. 13주차 교안과 같은 예제입니다.
 
-## 실행 순서
+`requests/`의 요청문 네 개를 메모 세 편(`notes/`)만 있는 폴더에서 Claude Code에 차례로 보내 만들었습니다(2026-10-07). 같은 요청문을 보내도 Claude Code가 만드는 코드는 달라질 수 있습니다. 이 폴더의 코드는 자신의 결과와 비교해 보는 견본이며 정답이 아닙니다.
 
-이 README가 있는 폴더에서 실행합니다. Python 3.9 이상, 추가 패키지 없음.
+## 파일
+
+| 파일 | 만든 요청 | 하는 일 |
+|---|---|---|
+| `count_once.py` | `requests/1-count-once.txt` | 입력한 메모 한 줄을 띄어쓰기로 나누어 말마다 횟수를 셉니다 |
+| `count_notes.py` | `requests/2-count-notes.txt` | `notes/`의 메모 파일을 모두 읽어 세고, 전체 결과를 `keywords.csv`에 저장합니다 |
+| `count_rules.py` | `requests/3-rules.txt`, `requests/4-refine-rules.txt` | 마침표 떼기, 같은 말 묶기, 세지 않을 말, 한 글자 제외 규칙을 더해 셉니다 |
+| `notes/` | (실습 자료) | 실습용으로 지어 쓴 메모 세 편입니다. 실제 업무 기록이 아닙니다 |
+| `stages/count_rules.request3.py` | (보관) | 세 번째 요청까지 반영했을 때의 `count_rules.py`입니다 |
+| `results/` | (실행 결과) | 두 번째, 세 번째, 네 번째 요청 뒤의 결과 파일입니다(27줄, 17줄, 10줄) |
+
+## 실행
+
+이 폴더에서 실행합니다. 세 프로그램 모두 파이썬 기본 기능만 씁니다.
 
 ```bash
-python3 keywords_once.py
-# 입력 예: 문의 회의 문의 배송 회의 문의
-python3 keywords_files.py
-python3 keywords_rules.py
-python3 keywords_rules_refined.py
-python3 keywords_text_only.py
-python3 keywords_checked.py
+uv run count_once.py     # 메모 한 줄을 입력합니다. 예: 문의 회의 문의 배송 회의 문의
+uv run count_notes.py
+uv run count_rules.py
 ```
 
-- `keywords_once.py`: 공백으로 나눈 한 줄의 표현을 셉니다. 문의 3·회의 2·배송 1. 파일 생성 없음.
-- `keywords_files.py`: `notes/*.txt`를 읽고 전체 결과를 `output/keywords.csv`에 저장합니다.
-- `keywords_rules.py`: 명시한 조사 표기 대응표·제외어·두 글자 이상 기준을 적용합니다.
-- `keywords_rules_refined.py`: 새로 선택한 제외어를 추가한 후속 단계입니다. 합성 메모의 결과는 전체 16행, 횟수 합계 36입니다.
-- `keywords_text_only.py`: 한글·영문 조각만 세도록 확장한 후속 단계입니다.
-- `keywords_checked.py`: 실패 종료 상태까지 구별하는 최종 연결용 예제입니다.
+`count_notes.py`와 `count_rules.py`는 같은 `keywords.csv`에 저장하므로, 나중에 실행한 쪽의 결과가 남습니다.
 
-파일 단계는 **현재 작업 폴더**의 `notes`를 읽습니다. 같은 `output/keywords.csv`를 단계마다 갱신하므로 단계별 결과를 보관하려면 실행 후 별도 사본을 만드세요. 화면 상위 10개와 CSV 전체 행은 다릅니다.
+## 확인해 볼 것
 
-## W14에 연결
+- 한 줄 세기에서 직접 센 횟수와 화면의 횟수가 같은지 확인합니다.
+- `count_notes.py`의 결과에서 `문의를`, `문의와`처럼 같은 말이 여러 줄로 나뉜 것을 찾아봅니다.
+- `count_rules.py`의 결과에서 문의가 7번인지, 메모 세 편에서 직접 세어 대조합니다.
+- 실행한 뒤에도 `notes/`의 메모 내용이 그대로인지 확인합니다.
 
-`keywords_checked.py` 또는 `keywords_rules_refined.py`를 제공 메모로 실행한 CSV는 `word,count` 두 열, UTF-8 BOM, 전체 16행·합계 36입니다. W14의 `data/keywords.csv`와 대조할 수 있습니다. W14는 보관 CSV를 읽는 기능이며 메모를 새로 집계하지 않습니다.
+## 알아 둘 점
 
-## 자료와 한계
-
-- `requests/`: 학생용 요청문 예시. 실제 생성 당시에는 기존 코드와 강사 조건도 함께 전달되었습니다. 짧은 문장만으로 같은 결과가 나온다는 보장은 아닙니다.
-- `legacy/`: 이전 교안에 쓰인 `keywords.py`와 입력·보관 출력. 단계별 생성본과 다르므로 같은 버전으로 소개하지 않습니다.
-- 규칙은 명시한 범위입니다. 완전한 한국어 형태소·의미 분석이나 업무 중요도 평가가 아닙니다.
-- `keywords_files.py`부터 `keywords_text_only.py`까지는 오류 안내 후에도 종료코드가 0일 수 있습니다. 남아 있는 기존 CSV를 이번 집계 성공으로 판단하지 마세요. 후속 연결에서 종료 상태가 필요하면 `keywords_checked.py`를 사용합니다.
-- 강사용 AI 응답 전문·원시 로그·전체 시험 근거는 로컬 제작 경로에 따로 보관하고 이 학생용 폴더에는 포함하지 않습니다.
+묶을 말과 세지 않을 말은 요청문에 적은 것만 처리합니다. 한국어 문장을 스스로 분석하는 것이 아니므로, 메모가 달라지면 규칙도 다시 정해야 합니다. 많이 나온 말이 곧 중요한 일이라는 뜻도 아닙니다.
